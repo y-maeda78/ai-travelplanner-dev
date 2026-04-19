@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Planner | あなただけの特別な旅を</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(140deg, #ea7e36 0%, #ffedd5 40%, #fee2e2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 1.5rem;
+        }
+
+        .custom-shadow {
+            box-shadow: 0 10px 30px -5px rgba(251, 146, 60, 0.1), 0 8px 15px -6px rgba(251, 146, 60, 0.1);
+        }
+
+        /* 印刷設定: 旅行プランのみを印刷対象にする */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            header,
+            main,
+            footer,
+            .no-print {
+                display: none !important;
+            }
+
+            section {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .glass-card {
+                box-shadow: none !important;
+                border: 1px solid #eee !important;
+                backdrop-filter: none !important;
+                background: white !important;
+            }
+
+            .print-area {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-slate-800 antialiased px-4 py-8 md:py-16">
+
+    <div class="max-w-3xl mx-auto">
+        <!-- ヘッダー部分 -->
+        <header class="text-center mb-12">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 bg-orange-500 text-white rounded-2xl mb-4 shadow-sm shadow-orange-200">
+                <!-- アイコンを飛行機に変更 -->
+                <i data-lucide="plane" class="w-8 h-8"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">AIトラベルプランナー</h1>
+            <p class="text-slate-500">条件を入力するだけで、あなたに最適な旅行プランを作成します</p>
+        </header>
+
+        <!-- メインフォーム -->
+        <main class="glass-card custom-shadow p-6 md:p-10 mb-10">
+            <form method="POST" class="space-y-6" id="plannerForm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 目的地 -->
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700">
+                            <i data-lucide="map-pin" class="w-4 h-4 mr-2 text-orange-500"></i>
+                            目的地
+                        </label>
+                        <input type="text" name="location"
+                            class="w-full px-4 py-3 bg-white border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            placeholder="例：沖縄、三重県伊勢市" required>
+                    </div>
+
+                    <!-- 人数 -->
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700">
+                            <i data-lucide="users" class="w-4 h-4 mr-2 text-orange-500"></i>
+                            人数
+                        </label>
+                        <input type="text" name="people"
+                            class="w-full px-4 py-3 bg-white border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            placeholder="例：2人" required>
+                    </div>
+
+                    <!-- 滞在期間 -->
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700">
+                            <i data-lucide="calendar-range" class="w-4 h-4 mr-2 text-orange-500"></i>
+                            滞在期間
+                        </label>
+                        <select name="stay_type"
+                            class="w-full px-4 py-3 bg-white border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all appearance-none cursor-pointer">
+                            <option value="日帰り">日帰り</option>
+                            <option value="1泊2日" selected>1泊2日</option>
+                            <option value="2泊3日">2泊3日</option>
+                            <option value="3泊4日">3泊4日</option>
+                            <option value="4泊5日">4泊5日</option>
+                            <option value="5泊6日">5泊6日</option>
+                        </select>
+                    </div>
+
+                    <!-- 予算 -->
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700">
+                            <i data-lucide="wallet" class="w-4 h-4 mr-2 text-orange-500"></i>
+                            予算
+                        </label>
+                        <input type="text" name="price"
+                            class="w-full px-4 py-3 bg-white border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            placeholder="例：5万円" required>
+                    </div>
+                </div>
+
+                <!-- 旅行の目的 -->
+                <div class="space-y-2">
+                    <label class="flex items-center text-sm font-semibold text-slate-700">
+                        <i data-lucide="compass" class="w-4 h-4 mr-2 text-orange-500"></i>
+                        旅行の目的・こだわり
+                    </label>
+                    <textarea name="objective" rows="3"
+                        class="w-full px-4 py-3 bg-white border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                        placeholder="例：美味しい海鮮料理を食べたい、歴史ある神社を巡りたい、のんびり温泉を楽しみたい等" required></textarea>
+                </div>
+
+                <!-- 送信ボタン -->
+                <button type="submit"
+                    class="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-100 transition-all transform hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center">
+                    プランを作成する
+                </button>
+            </form>
+        </main>
+
+        <!-- プラン出力結果 -->
+        {% if plan %}
+        <section class="animate-in fade-in slide-in-from-bottom-4 duration-700 print-area">
+            <div class="flex items-center mb-6 no-print">
+                <div class="w-8 h-1 bg-orange-500 rounded-full mr-3"></div>
+                <h2 class="text-2xl font-bold text-slate-900">旅行プラン</h2>
+            </div>
+
+            <div class="glass-card custom-shadow p-6 md:p-8 bg-white border-orange-300 border-2">
+                <!-- 印刷時のみ表示されるヘッダー -->
+                <div class="hidden print:block mb-6 border-b pb-4 text-center">
+                    <h1 class="text-2xl font-bold text-slate-900">旅行日程</h1>
+                    <p class="text-sm text-slate-500">Generated by AI Travel Planner</p>
+                </div>
+
+                <div class="prose max-w-none text-slate-700 leading-relaxed">
+                    <p style="white-space: pre-wrap;">{{ plan }}</p>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center no-print">
+                    <span class="text-sm text-slate-400 italic">※AIが提案したプランです。詳細は別途ご確認ください。</span>
+                    <button onclick="window.print()"
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center">
+                        <i data-lucide="printer" class="w-4 h-4 mr-2"></i>
+                        プランを印刷する
+                    </button>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- フッター -->
+        <footer class="mt-16 text-center text-slate-400 text-sm">
+            <p>&copy; 2026 AI Travel Planner. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Lucideアイコンの初期化
+        lucide.createIcons();
+
+        // フォーム送信処理
+        const form = document.getElementById('plannerForm');
+        form.addEventListener('submit', (e) => {
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                旅行プランを考えています...
+            `;
+            btn.classList.replace('bg-orange-500', 'bg-orange-300');
+        });
+    </script>
+</body>
+
+</html>
